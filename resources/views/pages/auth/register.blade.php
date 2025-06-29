@@ -83,6 +83,11 @@
                     </button>
                 </div>
             </form>
+
+            <!-- Footer with Login Link -->
+            <div class="auth-footer">
+                Already have an account? <a href="{{ route('login') }}" class="auth-link">Sign in here</a>
+            </div>
         </div>
     </div>
 @endsection
