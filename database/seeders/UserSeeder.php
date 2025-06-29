@@ -18,6 +18,8 @@ class UserSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'super4dmin@posin.com',
             'password' => Hash::make('password'),
+            'phone' => '081234567890',
+            'roles' => 'ADMIN',
         ]);
     }
 }
