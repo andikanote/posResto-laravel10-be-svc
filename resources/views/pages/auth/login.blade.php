@@ -117,7 +117,7 @@
                         </form>
 
                         <div class="mt-5 text-center">
-                            Don't have an account? <a href="{{ route('register') }}">Create new one</a>
+                            Don't have an account? <a href="{{ route('register') }}">Create new account</a>
                         </div>
 
                         <div class="text-small mt-5 text-center">
