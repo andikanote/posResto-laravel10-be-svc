@@ -262,7 +262,7 @@
                         </div>
                         <div class="card-footer text-right">
                             <a href="{{ url()->previous() }}" class="btn btn-danger mr-2">Back</a>
-                            <button class="btn btn-primary">Update User</button>
+                            <button class="btn btn-primary">Create User</button>
                         </div>
                     </form>
                 </div>
