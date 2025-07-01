@@ -63,27 +63,37 @@ class userController extends Controller
     {
         // Find the user by ID
         $user = User::findOrFail($id);
-        return view('user.edit', compact('user'));
+        return view('pages.user.edit', compact('user'));
     }
 
     //Update
     public function update(Request $request, $id)
     {
         // Validate the request data
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|min:8',
+            'phone' => 'nullable|string|max:20',
+            'roles' => 'required|in:ADMIN,STAFF,USER',
         ]);
+
         // Find the user by ID
         $user = User::findOrFail($id);
+
         // Update the user data
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        if ($request->filled('password')) {
-            $user->password = bcrypt($request->input('password'));
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->roles = $validated['roles'];
+        $user->phone = $validated['phone'] ?? $user->phone;
+
+        // Update password if provided
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
         }
+
         $user->save();
+
         return redirect()->route('user.index')->with('success', 'User updated successfully.');
     }
 
