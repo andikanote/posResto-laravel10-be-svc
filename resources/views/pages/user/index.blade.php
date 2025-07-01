@@ -5,6 +5,7 @@
 @push('style')
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
+    <link rel="stylesheet" href="{{ asset('library/bootstrap-daterangepicker/daterangepicker.css') }}">
 @endpush
 
 @section('main')
@@ -22,22 +23,16 @@
                 </div>
             </div>
             <div class="section-body">
-                {{-- <div class="row">
-                    <div class="col-12">
-                        @include('layouts.alert')
-                    </div>
-                </div> --}}
-                <h2 class="section-title">Users</h2>
+                <h2 class="section-title">Users Management</h2>
                 <p class="section-lead">
                     You can manage all Users, such as editing, deleting and more.
                 </p>
-
 
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>All Posts</h4>
+                                <h4>All Users</h4>
                             </div>
                             <div class="card-body">
                                 <div class="float-left">
@@ -51,7 +46,8 @@
                                 <div class="float-right">
                                     <form method="GET" action="{{ route('user.index') }}">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Search" name="name">
+                                            <input type="text" class="form-control" placeholder="Search by name or email"
+                                                name="search">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                                             </div>
@@ -63,53 +59,45 @@
 
                                 <div class="table-responsive">
                                     <table class="table-striped table">
-                                        <tr>
-
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Phone Number</th>
-                                            <th>Roles</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
-                                        </tr>
-                                        @foreach ($users as $user)
+                                        <thead>
                                             <tr>
-
-                                                <td>{{ $user->name }}
-                                                </td>
-                                                <td>
-                                                    {{ $user->email }}
-                                                </td>
-                                                <td>
-                                                    {{ $user->phone }}
-                                                </td>
-                                                <td>
-                                                    {{ $user->roles }}
-                                                </td>
-                                                <td>{{ $user->created_at }}</td>
-                                                <td>
-                                                    <div class="d-flex justify-content-center">
-                                                        <a href='{{ route('user.edit', $user->id) }}'
-                                                            class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i>
-                                                            Edit
-                                                        </a>
-
-                                                        <form action="{{ route('user.destroy', $user->id) }}"
-                                                            method="POST" class="ml-2">
-                                                            <input type="hidden" name="_method" value="DELETE" />
-                                                            <input type="hidden" name="_token"
-                                                                value="{{ csrf_token() }}" />
-                                                            <button class="btn btn-sm btn-danger btn-icon confirm-delete">
-                                                                <i class="fas fa-times"></i> Delete
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>Roles</th>
+                                                <th>Created At</th>
+                                                <th>Action</th>
                                             </tr>
-                                        @endforeach
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($users as $user)
+                                                <tr>
+                                                    <td>{{ $user->name }}</td>
+                                                    <td>{{ $user->email }}</td>
+                                                    <td>{{ $user->phone ?? '-' }}</td>
+                                                    <td>{{ ucfirst(strtolower($user->roles)) }}</td>
+                                                    <td>{{ $user->created_at->format('d M Y') }}</td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <a href="{{ route('user.edit', $user->id) }}"
+                                                                class="btn btn-sm btn-info btn-icon">
+                                                                <i class="fas fa-edit"></i> Edit
+                                                            </a>
 
-
+                                                            <form action="{{ route('user.destroy', $user->id) }}"
+                                                                method="POST" class="ml-2">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button
+                                                                    class="btn btn-sm btn-danger btn-icon confirm-delete">
+                                                                    <i class="fas fa-times"></i> Delete
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
                                     </table>
                                 </div>
                                 <div class="float-right">
@@ -127,7 +115,8 @@
 @push('scripts')
     <!-- JS Libraies -->
     <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
+    <script src="{{ asset('library/sweetalert/dist/sweetalert.min.js') }}"></script>
 
     <!-- Page Specific JS File -->
-    <script src="{{ asset('js/page/features-posts.js') }}"></script>
+    <script src="{{ asset('js/page/features-users.js') }}"></script>
 @endpush

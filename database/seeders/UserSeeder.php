@@ -13,13 +13,13 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory()->count(9)->create();
+        // In UserSeeder.php
         $user = \App\Models\User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'super4dmin@posin.com',
             'password' => Hash::make('password'),
             'phone' => '081234567890',
-            'roles' => 'ADMIN',
+            'roles' => 'ADMIN', // Changed to uppercase
         ]);
     }
 }

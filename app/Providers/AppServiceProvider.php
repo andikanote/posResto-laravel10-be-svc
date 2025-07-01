@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Contracts\RegisterResponse;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,5 +28,7 @@ class AppServiceProvider extends ServiceProvider
                 return redirect()->route('login'); // Arahkan ke login
             }
         });
+
+        Paginator::useBootstrapFour(); // Use Bootstrap 4 for pagination
     }
 }

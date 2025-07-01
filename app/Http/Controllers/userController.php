@@ -3,32 +3,51 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class userController extends Controller
 {
     //Index
-    public function index()
+    public function index(Request $request)
     {
-        // Get Users Pagination
-        $users = \App\Models\User::paginate(10);
+        $search = $request->input('search');
+
+        $users = User::when($search, function ($query, $search) {
+            return $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+        })->paginate(10);
+
         return view('pages.user.index', compact('users'));
     }
 
     //Create
     public function create()
     {
-        return view('user.create');
+        return view('pages.user.create');
     }
 
     //Store
     public function store(Request $request)
     {
-        // Validate the request data
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
+            'phone' => 'nullable|string|max:20',
+            'roles' => 'required|in:ADMIN,STAFF,USER', // Validate against allowed values
         ]);
+
+        // Hash password
+        $validated['password'] = Hash::make($validated['password']);
+
+        // Pastikan roles uppercase
+        $validated['roles'] = strtoupper($validated['roles']);
+
+        User::create($validated);
+
+        return redirect()->route('user.index')
+            ->with('success', 'User created successfully');
     }
 
     //Show
