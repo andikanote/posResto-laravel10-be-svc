@@ -21,11 +21,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-    'name',
-    'email',
-    'password',
-    'phone',
-    'roles', // Make sure this matches your database column
+        'name',
+        'email',
+        'password',
+        'phone',
+        'roles',
+        // Tambahkan ini jika perlu:
+        'created_at',
+        'updated_at'
     ];
 
     /**

@@ -66,17 +66,48 @@
                                                 <th>Phone</th>
                                                 <th>Roles</th>
                                                 <th>Created At</th>
+                                                <th>Updated At</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($users as $user)
+                                                @php
+                                                    // Konversi waktu ke GMT+7
+                                                    $createdAt = \Carbon\Carbon::parse($user->created_at)->setTimezone('Asia/Jakarta');
+                                                    $updatedAt = \Carbon\Carbon::parse($user->updated_at)->setTimezone('Asia/Jakarta');
+                                                @endphp
                                                 <tr>
-                                                    <td>{{ $user->name }}</td>
+                                                    <td>
+                                                        <a href="#" class="text-primary view-user-detail"
+                                                           data-id="{{ $user->id }}"
+                                                           data-toggle="modal"
+                                                           data-target="#userDetailModal"
+                                                           style="text-decoration: none;">
+                                                            {{ $user->name }}
+                                                        </a>
+                                                    </td>
                                                     <td>{{ $user->email }}</td>
                                                     <td>{{ $user->phone ?? '-' }}</td>
                                                     <td>{{ ucfirst(strtolower($user->roles)) }}</td>
-                                                    <td>{{ $user->created_at->format('d M Y') }}</td>
+                                                    <td>
+                                                        <span title="{{ $createdAt->format('Y-m-d H:i:s') }} WIB">
+                                                            {{ $createdAt->diffForHumans() }}
+                                                        </span>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            {{ $createdAt->format('d M Y, H:i') }} WIB
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <span title="{{ $updatedAt->format('Y-m-d H:i:s') }} WIB">
+                                                            {{ $updatedAt->diffForHumans() }}
+                                                        </span>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            {{ $updatedAt->format('d M Y, H:i') }} WIB
+                                                        </small>
+                                                    </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
                                                             <a href="{{ route('user.edit', $user->id) }}"
@@ -110,6 +141,49 @@
             </div>
         </section>
     </div>
+
+    <!-- User Detail Modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="userDetailModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <p id="detail-name" class="form-control-static"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <p id="detail-email" class="form-control-static"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone:</label>
+                        <p id="detail-phone" class="form-control-static"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Role:</label>
+                        <p id="detail-role" class="form-control-static"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Created At:</label>
+                        <p id="detail-created" class="form-control-static"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Updated At:</label>
+                        <p id="detail-updated" class="form-control-static"></p>
+                    </div>
+                </div>
+                <div class="modal-footer bg-whitesmoke br">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -119,4 +193,54 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/features-users.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            // View User Details when clicking on name
+            $('.view-user-detail').on('click', function(e) {
+                e.preventDefault();
+                var userId = $(this).data('id');
+
+                // AJAX request to get user details
+                $.ajax({
+                    url: '/user/' + userId,
+                    type: 'GET',
+                    success: function(response) {
+                        // Format dates
+                        var createdAt = new Date(response.created_at);
+                        var updatedAt = new Date(response.updated_at);
+
+                        // Set modal content
+                        $('#detail-name').text(response.name);
+                        $('#detail-email').text(response.email);
+                        $('#detail-phone').text(response.phone || '-');
+                        $('#detail-role').text(response.roles.charAt(0) + response.roles.slice(1).toLowerCase());
+                        $('#detail-created').text(createdAt.toLocaleString('en-US', {
+                            timeZone: 'Asia/Jakarta',
+                            weekday: 'short',
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            timeZoneName: 'short'
+                        }));
+                        $('#detail-updated').text(updatedAt.toLocaleString('en-US', {
+                            timeZone: 'Asia/Jakarta',
+                            weekday: 'short',
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            timeZoneName: 'short'
+                        }));
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching user details');
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

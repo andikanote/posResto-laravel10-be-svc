@@ -55,6 +55,11 @@ class userController extends Controller
     {
         // Find the user by ID
         $user = User::findOrFail($id);
+
+        if(request()->ajax()) {
+            return response()->json($user);
+        }
+
         return view('user.show', compact('user'));
     }
 
@@ -84,13 +89,19 @@ class userController extends Controller
         // Update the user data
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-        $user->roles = $validated['roles'];
+        $user->roles = strtoupper($validated['roles']); // Pastikan uppercase
         $user->phone = $validated['phone'] ?? $user->phone;
 
         // Update password if provided
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
+
+        // Tambahkan ini untuk memastikan updated_at terupdate
+        $user->touch(); // Ini akan mengupdate updated_at
+
+        // Atau alternatifnya:
+        // $user->updated_at = now();
 
         $user->save();
 
