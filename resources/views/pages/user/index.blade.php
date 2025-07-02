@@ -156,7 +156,59 @@
 
     <!-- User Detail Modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="userDetailModal">
-        <!-- Modal content -->
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Name</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-plaintext" id="detail-name"></p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-plaintext" id="detail-email"></p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Phone</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-plaintext" id="detail-phone"></p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Role</label>
+                        <div class="col-sm-9">
+                            <span class="badge" id="detail-role-badge">
+                                <span id="detail-role"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Created At</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-plaintext" id="detail-created"></p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Updated At</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-plaintext" id="detail-updated"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -249,7 +301,6 @@
                         } else {
                             roleBadge.addClass('badge-secondary');
                         }
-
                         $('#detail-role').text(response.roles.charAt(0) + response.roles.slice(1).toLowerCase());
 
                         $('#detail-created').text(createdAt.toLocaleString('en-US', {
@@ -273,6 +324,9 @@
                             minute: '2-digit',
                             timeZoneName: 'short'
                         }));
+
+                        // Show the modal
+                        $('#userDetailModal').modal('show');
                     },
                     error: function(xhr) {
                         swal('Error', 'Failed to fetch user details', 'error');
