@@ -14,7 +14,7 @@
             <div class="section-header">
                 <h1>Users</h1>
                 <div class="section-header-button">
-                    <a href="{{ route('user.create') }}" class="btn btn-primary">Add New Users</a>
+                    <a href="{{ route('user.create') }}" class="btn btn-primary">Add New User</a>
                 </div>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
@@ -35,19 +35,28 @@
                                 <h4>All Users</h4>
                             </div>
                             <div class="card-body">
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
+
                                 <div class="float-left">
-                                    <select class="form-control selectric">
-                                        <option>Action For Selected</option>
-                                        <option>Move to Draft</option>
-                                        <option>Move to Pending</option>
-                                        <option>Delete Pemanently</option>
+                                    <select class="form-control selectric" id="role-filter">
+                                        <option value="">All Roles</option>
+                                        <option value="ADMIN" {{ request('role') == 'ADMIN' ? 'selected' : '' }}>Admin</option>
+                                        <option value="STAFF" {{ request('role') == 'STAFF' ? 'selected' : '' }}>Staff</option>
+                                        <option value="USER" {{ request('role') == 'USER' ? 'selected' : '' }}>User</option>
                                     </select>
                                 </div>
                                 <div class="float-right">
                                     <form method="GET" action="{{ route('user.index') }}">
                                         <div class="input-group">
                                             <input type="text" class="form-control" placeholder="Search by name or email"
-                                                name="search">
+                                                name="search" value="{{ request('search') }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                                             </div>
@@ -58,76 +67,79 @@
                                 <div class="clearfix mb-3"></div>
 
                                 <div class="table-responsive">
-                                    <table class="table-striped table">
-                                        <thead>
+                                    <table class="table table-striped table-hover">
+                                        <thead class="thead-light">
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
-                                                <th>Roles</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
-                                                <th>Action</th>
+                                                <th class="align-middle">Name</th>
+                                                <th class="align-middle">Email</th>
+                                                <th class="align-middle">Phone</th>
+                                                <th class="align-middle">Roles</th>
+                                                <th class="align-middle">Created At</th>
+                                                <th class="align-middle">Updated At</th>
+                                                <th class="text-center align-middle">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($users as $user)
+                                            @forelse ($users as $user)
                                                 @php
-                                                    // Konversi waktu ke GMT+7
                                                     $createdAt = \Carbon\Carbon::parse($user->created_at)->setTimezone('Asia/Jakarta');
                                                     $updatedAt = \Carbon\Carbon::parse($user->updated_at)->setTimezone('Asia/Jakarta');
                                                 @endphp
                                                 <tr>
-                                                    <td>
-                                                        <a href="#" class="text-primary view-user-detail"
-                                                           data-id="{{ $user->id }}"
-                                                           data-toggle="modal"
-                                                           data-target="#userDetailModal"
-                                                           style="text-decoration: none;">
+                                                    <td class="align-middle">
+                                                        <a href="#"
+                                                            class="text-primary font-weight-bold view-user-detail"
+                                                            data-id="{{ $user->id }}" data-toggle="modal"
+                                                            data-target="#userDetailModal" style="text-decoration: none;">
                                                             {{ $user->name }}
                                                         </a>
                                                     </td>
-                                                    <td>{{ $user->email }}</td>
-                                                    <td>{{ $user->phone ?? '-' }}</td>
-                                                    <td>{{ ucfirst(strtolower($user->roles)) }}</td>
-                                                    <td>
-                                                        <span title="{{ $createdAt->format('Y-m-d H:i:s') }} WIB">
-                                                            {{ $createdAt->diffForHumans() }}
+                                                    <td class="align-middle">{{ $user->email }}</td>
+                                                    <td class="align-middle">{{ $user->phone ?? '-' }}</td>
+                                                    <td class="align-middle">
+                                                        <span class="badge
+                                                            @if ($user->roles === 'ADMIN') badge-primary
+                                                            @elseif($user->roles === 'STAFF') badge-warning
+                                                            @elseif($user->roles === 'USER') badge-success
+                                                            @else badge-secondary @endif">
+                                                            {{ ucfirst(strtolower($user->roles)) }}
                                                         </span>
-                                                        <br>
-                                                        <small class="text-muted">
-                                                            {{ $createdAt->format('d M Y, H:i') }} WIB
-                                                        </small>
                                                     </td>
-                                                    <td>
-                                                        <span title="{{ $updatedAt->format('Y-m-d H:i:s') }} WIB">
-                                                            {{ $updatedAt->diffForHumans() }}
-                                                        </span>
-                                                        <br>
-                                                        <small class="text-muted">
-                                                            {{ $updatedAt->format('d M Y, H:i') }} WIB
-                                                        </small>
+                                                    <td class="align-middle">
+                                                        <div class="d-flex flex-column">
+                                                            <span class="text-sm text-muted">{{ $createdAt->format('d M Y') }}</span>
+                                                            <small class="text-muted">{{ $createdAt->format('H:i') }} WIB</small>
+                                                        </div>
                                                     </td>
-                                                    <td>
+                                                    <td class="align-middle">
+                                                        <div class="d-flex flex-column">
+                                                            <span class="text-sm text-muted">{{ $updatedAt->format('d M Y') }}</span>
+                                                            <small class="text-muted">{{ $updatedAt->format('H:i') }} WIB</small>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">
                                                         <div class="d-flex justify-content-center">
                                                             <a href="{{ route('user.edit', $user->id) }}"
-                                                                class="btn btn-sm btn-info btn-icon">
-                                                                <i class="fas fa-edit"></i> Edit
+                                                                class="btn btn-sm btn-info btn-icon mr-2">
+                                                                <i class="fas fa-edit"></i>
                                                             </a>
-
                                                             <form action="{{ route('user.destroy', $user->id) }}"
-                                                                method="POST" class="ml-2">
+                                                                method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button
                                                                     class="btn btn-sm btn-danger btn-icon confirm-delete">
-                                                                    <i class="fas fa-times"></i> Delete
+                                                                    <i class="fas fa-trash"></i>
                                                                 </button>
                                                             </form>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No users found</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
@@ -144,45 +156,7 @@
 
     <!-- User Detail Modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="userDetailModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">User Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Name:</label>
-                        <p id="detail-name" class="form-control-static"></p>
-                    </div>
-                    <div class="form-group">
-                        <label>Email:</label>
-                        <p id="detail-email" class="form-control-static"></p>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone:</label>
-                        <p id="detail-phone" class="form-control-static"></p>
-                    </div>
-                    <div class="form-group">
-                        <label>Role:</label>
-                        <p id="detail-role" class="form-control-static"></p>
-                    </div>
-                    <div class="form-group">
-                        <label>Created At:</label>
-                        <p id="detail-created" class="form-control-static"></p>
-                    </div>
-                    <div class="form-group">
-                        <label>Updated At:</label>
-                        <p id="detail-updated" class="form-control-static"></p>
-                    </div>
-                </div>
-                <div class="modal-footer bg-whitesmoke br">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
+        <!-- Modal content -->
     </div>
 @endsection
 
@@ -192,10 +166,58 @@
     <script src="{{ asset('library/sweetalert/dist/sweetalert.min.js') }}"></script>
 
     <!-- Page Specific JS File -->
-    <script src="{{ asset('js/page/features-users.js') }}"></script>
-
     <script>
         $(document).ready(function() {
+            // Initialize selectric
+            $('.selectric').selectric();
+
+            // Show success alert if exists
+            @if(session('success'))
+                swal({
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    timer: 3000,
+                    buttons: false
+                });
+            @endif
+
+            // Role filter functionality
+            $('#role-filter').on('change', function() {
+                var role = $(this).val();
+                var url = new URL(window.location);
+
+                if (role) {
+                    url.searchParams.set('role', role);
+                } else {
+                    url.searchParams.delete('role');
+                }
+
+                // Remove page parameter to go back to first page
+                url.searchParams.delete('page');
+
+                window.location.href = url.toString();
+            });
+
+            // Delete confirmation
+            $('.confirm-delete').on('click', function(e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+
+                swal({
+                    title: 'Are you sure?',
+                    text: 'Once deleted, you will not be able to recover this user!',
+                    icon: 'warning',
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        form.submit();
+                    }
+                });
+            });
+
             // View User Details when clicking on name
             $('.view-user-detail').on('click', function(e) {
                 e.preventDefault();
@@ -214,7 +236,22 @@
                         $('#detail-name').text(response.name);
                         $('#detail-email').text(response.email);
                         $('#detail-phone').text(response.phone || '-');
+
+                        // Set role badge
+                        var roleBadge = $('#detail-role-badge');
+                        roleBadge.removeClass().addClass('badge');
+                        if (response.roles === 'ADMIN') {
+                            roleBadge.addClass('badge-primary');
+                        } else if (response.roles === 'STAFF') {
+                            roleBadge.addClass('badge-warning');
+                        } else if (response.roles === 'USER') {
+                            roleBadge.addClass('badge-success');
+                        } else {
+                            roleBadge.addClass('badge-secondary');
+                        }
+
                         $('#detail-role').text(response.roles.charAt(0) + response.roles.slice(1).toLowerCase());
+
                         $('#detail-created').text(createdAt.toLocaleString('en-US', {
                             timeZone: 'Asia/Jakarta',
                             weekday: 'short',
@@ -225,6 +262,7 @@
                             minute: '2-digit',
                             timeZoneName: 'short'
                         }));
+
                         $('#detail-updated').text(updatedAt.toLocaleString('en-US', {
                             timeZone: 'Asia/Jakarta',
                             weekday: 'short',
@@ -237,7 +275,7 @@
                         }));
                     },
                     error: function(xhr) {
-                        alert('Error fetching user details');
+                        swal('Error', 'Failed to fetch user details', 'error');
                     }
                 });
             });

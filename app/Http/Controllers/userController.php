@@ -12,11 +12,17 @@ class userController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $role = $request->input('role');
 
         $users = User::when($search, function ($query, $search) {
-            return $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-        })->paginate(10);
+                return $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->when($role, function ($query, $role) {
+                return $query->where('roles', $role);
+            })
+            ->paginate(10)
+            ->withQueryString();
 
         return view('pages.user.index', compact('users'));
     }
@@ -35,7 +41,7 @@ class userController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'phone' => 'nullable|string|max:20',
-            'roles' => 'required|in:ADMIN,STAFF,USER', // Validate against allowed values
+            'roles' => 'required|in:ADMIN,STAFF,USER',
         ]);
 
         // Hash password
@@ -47,7 +53,7 @@ class userController extends Controller
         User::create($validated);
 
         return redirect()->route('user.index')
-            ->with('success', 'User created successfully');
+            ->with('success', 'User created successfully!');
     }
 
     //Show
@@ -89,7 +95,7 @@ class userController extends Controller
         // Update the user data
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-        $user->roles = strtoupper($validated['roles']); // Pastikan uppercase
+        $user->roles = strtoupper($validated['roles']);
         $user->phone = $validated['phone'] ?? $user->phone;
 
         // Update password if provided
@@ -97,15 +103,10 @@ class userController extends Controller
             $user->password = Hash::make($validated['password']);
         }
 
-        // Tambahkan ini untuk memastikan updated_at terupdate
-        $user->touch(); // Ini akan mengupdate updated_at
-
-        // Atau alternatifnya:
-        // $user->updated_at = now();
-
         $user->save();
 
-        return redirect()->route('user.index')->with('success', 'User updated successfully.');
+        return redirect()->route('user.index')
+            ->with('success', 'User updated successfully!');
     }
 
     //Destroy
@@ -115,7 +116,7 @@ class userController extends Controller
         $user = User::findOrFail($id);
         // Delete the user
         $user->delete();
-        return redirect()->route('user.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('user.index')
+            ->with('success', 'User deleted successfully!');
     }
 }
-
