@@ -54,7 +54,7 @@
                                 <div class="d-block">
                                     <label for="password" class="control-label">Password</label>
                                     <div class="float-right">
-                                        <a href="{{ route('password.request') }}" class="text-small">
+                                        <a href="#" class="text-small" id="forgotPasswordLink">
                                             Forgot Password?
                                         </a>
                                     </div>
@@ -110,49 +110,69 @@
                                 <h1 class="display-4 font-weight-bold mb-2" id="greeting">Good Morning</h1>
                                 <h5 class="font-weight-normal text-muted-transparent">PT Boetjah Kampoeng Indonesia, POSIn</h5>
                             </div>
-                            {{-- Photo by <a class="text-light bb"
-                target="_blank"
-                href="https://unsplash.com/photos/a8lTjWJJgLA">Justin Kauffman</a> on <a
-                class="text-light bb"
-                target="_blank"
-                href="https://unsplash.com">Unsplash</a> --}}
                         </div>
                     </div>
                 </div>
-
-                <script>
-                    // Function to update greeting based on current time (GMT+7)
-                    function updateGreeting() {
-                        const now = new Date();
-                        // Get current hour in GMT+7 (WIB)
-                        const hours = now.getUTCHours() + 7;
-                        const adjustedHours = hours >= 24 ? hours - 24 : hours;
-
-                        const greetingElement = document.getElementById('greeting');
-                        let greeting;
-
-                        if (adjustedHours >= 0 && adjustedHours < 12) {
-                            greeting = 'Good Morning';
-                        } else if (adjustedHours >= 12 && adjustedHours < 16) {
-                            greeting = 'Good Afternoon';
-                        } else if (adjustedHours >= 16 && adjustedHours < 19) {
-                            greeting = 'Good Evening';
-                        } else {
-                            greeting = 'Good Night';
-                        }
-
-                        greetingElement.textContent = greeting;
-                    }
-
-                    // Update greeting on page load
-                    updateGreeting();
-
-                    // Update greeting every minute to handle changes
-                    setInterval(updateGreeting, 60000);
-                </script>
             </div>
         </section>
     </div>
+
+    <!-- Modal for Forgot Password -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password</h5>
+                    {{-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> --}}
+                </div>
+                <div class="modal-body">
+                    Halaman Forgot Password Under Maintenance
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to update greeting based on current time (GMT+7)
+        function updateGreeting() {
+            const now = new Date();
+            // Get current hour in GMT+7 (WIB)
+            const hours = now.getUTCHours() + 7;
+            const adjustedHours = hours >= 24 ? hours - 24 : hours;
+
+            const greetingElement = document.getElementById('greeting');
+            let greeting;
+
+            if (adjustedHours >= 0 && adjustedHours < 12) {
+                greeting = 'Good Morning';
+            } else if (adjustedHours >= 12 && adjustedHours < 16) {
+                greeting = 'Good Afternoon';
+            } else if (adjustedHours >= 16 && adjustedHours < 19) {
+                greeting = 'Good Evening';
+            } else {
+                greeting = 'Good Night';
+            }
+
+            greetingElement.textContent = greeting;
+        }
+
+        // Update greeting on page load
+        updateGreeting();
+
+        // Update greeting every minute to handle changes
+        setInterval(updateGreeting, 60000);
+
+        // Forgot Password link click handler
+        document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            $('#forgotPasswordModal').modal('show');
+        });
+    </script>
 
     <!-- General JS Scripts -->
     <script src="{{ asset('library/jquery/dist/jquery.min.js') }}"></script>
