@@ -4,7 +4,7 @@
             <a href="">Boetjah-CMS</a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
-            <a href="">Boetjah-CMS</a>
+            <a href="">BCMS</a>
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">Dashboard</li>

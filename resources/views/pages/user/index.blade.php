@@ -6,6 +6,15 @@
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
     <link rel="stylesheet" href="{{ asset('library/bootstrap-daterangepicker/daterangepicker.css') }}">
+    <style>
+        .btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .locked-user {
+            background-color: #f8f9fa;
+        }
+    </style>
 @endpush
 
 @section('main')
@@ -84,14 +93,18 @@
                                                 @php
                                                     $createdAt = \Carbon\Carbon::parse($user->created_at)->setTimezone('Asia/Jakarta');
                                                     $updatedAt = \Carbon\Carbon::parse($user->updated_at)->setTimezone('Asia/Jakarta');
+                                                    $isLocked = $loop->first; // Lock first row
                                                 @endphp
-                                                <tr>
+                                                <tr class="{{ $isLocked ? 'locked-user' : '' }}">
                                                     <td class="align-middle">
                                                         <a href="#"
                                                             class="text-primary font-weight-bold view-user-detail"
                                                             data-id="{{ $user->id }}" data-toggle="modal"
                                                             data-target="#userDetailModal" style="text-decoration: none;">
                                                             {{ $user->name }}
+                                                            @if($isLocked)
+                                                                <i class="fas fa-lock ml-1 text-muted" title="This user is locked"></i>
+                                                            @endif
                                                         </a>
                                                     </td>
                                                     <td class="align-middle">{{ $user->email }}</td>
@@ -119,19 +132,30 @@
                                                     </td>
                                                     <td class="align-middle">
                                                         <div class="d-flex justify-content-center">
-                                                            <a href="{{ route('user.edit', $user->id) }}"
-                                                                class="btn btn-sm btn-info btn-icon mr-2">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                            <form action="{{ route('user.destroy', $user->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button
-                                                                    class="btn btn-sm btn-danger btn-icon confirm-delete">
+                                                            @if($isLocked)
+                                                                <button class="btn btn-sm btn-info btn-icon mr-2" disabled
+                                                                    title="This user cannot be edited">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-danger btn-icon" disabled
+                                                                    title="This user cannot be deleted">
                                                                     <i class="fas fa-trash"></i>
                                                                 </button>
-                                                            </form>
+                                                            @else
+                                                                <a href="{{ route('user.edit', $user->id) }}"
+                                                                    class="btn btn-sm btn-info btn-icon mr-2">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </a>
+                                                                <form action="{{ route('user.destroy', $user->id) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button
+                                                                        class="btn btn-sm btn-danger btn-icon confirm-delete">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </button>
+                                                                </form>
+                                                            @endif
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -252,7 +276,7 @@
             });
 
             // Delete confirmation
-            $('.confirm-delete').on('click', function(e) {
+            $(document).on('click', '.confirm-delete', function(e) {
                 e.preventDefault();
                 var form = $(this).closest('form');
 
