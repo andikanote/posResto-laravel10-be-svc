@@ -146,7 +146,7 @@
                                                             method="POST" class="ml-2">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button class="btn btn-sm btn-danger btn-icon confirm-delete">
+                                                            <button class="btn btn-sm btn-danger btn-icon">
                                                                 <i class="fas fa-trash"></i> Delete
                                                             </button>
                                                         </form>
@@ -179,29 +179,4 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/features-posts.js') }}"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Delete confirmation with SweetAlert
-            $(document).on('click', '.confirm-delete', function(e) {
-                e.preventDefault();
-                var form = $(this).closest('form');
-
-                Swal.fire({
-                    title: 'Confirm Deletion',
-                    text: "Are you sure you want to delete this product? This action cannot be undone.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
-        });
-    </script>
 @endpush
