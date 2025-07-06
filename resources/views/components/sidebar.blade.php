@@ -38,7 +38,7 @@
                 <ul class="dropdown-menu">
                     <li class='{{ Request::is('categories') ? 'active' : '' }}'>
                         <a class="nav-link"
-                            href="">All Category</a>
+                            href="{{ route('categories.index') }}">All Category</a>
                     </li>
                 </ul>
             </li>
