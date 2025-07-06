@@ -34,11 +34,11 @@
             <li class="menu-header">Products & Category</li>
             <li class="nav-item dropdown">
                 <a href="#"
-                    class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Categories</span></a>
+                    class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Category</span></a>
                 <ul class="dropdown-menu">
                     <li class='{{ Request::is('categories') ? 'active' : '' }}'>
                         <a class="nav-link"
-                            href="">All Categories</a>
+                            href="">All Category</a>
                     </li>
                 </ul>
             </li>
