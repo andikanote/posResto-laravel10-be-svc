@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Product')
+@section('title', 'Edit Product Details')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -32,7 +32,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Edit Product</h1>
+                <h1>Update Product</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
                     <div class="breadcrumb-item"><a href="{{ route('products.index') }}">Products</a></div>
@@ -40,9 +40,9 @@
                 </div>
             </div>
             <div class="section-body">
-                <h2 class="section-title">Edit Product</h2>
+                <h2 class="section-title">Edit Product Details</h2>
                 <p class="section-lead">
-                    Update the product information below
+                    Modify the product details as needed
                 </p>
 
                 @if ($errors->any())
@@ -72,7 +72,7 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="card-header">
-                                    <h4>Edit Product Form</h4>
+                                    <h4>Edit Product Details</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -89,7 +89,7 @@
                                             <select
                                                 class="form-control selectric @error('category_id') is-invalid @enderror"
                                                 name="category_id" required>
-                                                <option value="">Choose Category</option>
+                                                <option value="">Select Category</option>
                                                 @foreach ($categories as $category)
                                                     <option value="{{ $category->id }}"
                                                         {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
@@ -121,7 +121,7 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-6 col-12">
-                                            <label>Stock</label>
+                                            <label>Stock Quantity</label>
                                             <input type="number" class="form-control @error('stock') is-invalid @enderror"
                                                 name="stock" value="{{ old('stock', $product->stock) }}" required>
                                             @error('stock')
@@ -130,7 +130,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label>Description</label>
+                                        <label>Product Description</label>
                                         <textarea class="form-control @error('description') is-invalid @enderror" name="description" rows="5" required>{{ old('description', $product->description) }}</textarea>
                                         @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -153,7 +153,7 @@
                                                 <label class="selectgroup-item">
                                                     <input type="checkbox" name="is_favorite" value="1"
                                                         class="selectgroup-input" {{ old('is_favorite', $product->is_favorite) ? 'checked' : '' }}>
-                                                    <span class="selectgroup-button">Mark as Favorite</span>
+                                                    <span class="selectgroup-button">Favorite</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -167,27 +167,27 @@
                                                 accept="image/jpeg,image/png,image/jpg,image/gif">
                                             <label class="custom-file-label" for="customFile">
                                                 @if($product->image)
-                                                    Current: {{ basename($product->image) }}
+                                                    Current image: {{ basename($product->image) }}
                                                 @else
-                                                    Choose file (JPEG, PNG, JPG, GIF - max 2MB)
+                                                    Select new image (JPEG, PNG, JPG - max 2MB)
                                                 @endif
                                             </label>
                                         </div>
                                         @if($product->image)
                                             <div class="mt-2">
-                                                <img src="{{ asset($product->image) }}" alt="Current Image" style="max-width: 200px;">
+                                                <img src="{{ asset($product->image) }}" alt="Current product image" style="max-width: 200px;">
                                             </div>
                                         @endif
                                         @error('image')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                         <div id="fileError" class="file-error">
-                                            File size exceeds 2MB limit. Please choose a smaller file.
+                                            File size exceeds 2MB limit. Please select a smaller file.
                                         </div>
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
                                     <a href="{{ route('products.index') }}" class="btn btn-secondary">Cancel</a>
                                 </div>
                             </form>
@@ -247,7 +247,7 @@
             // File input handling
             document.querySelector('.custom-file-input')?.addEventListener('change', function(e) {
                 var fileInput = e.target;
-                var fileName = fileInput.files[0]?.name || 'Choose file (JPEG, PNG, JPG, GIF - max 2MB)';
+                var fileName = fileInput.files[0]?.name || 'Select file (JPEG, PNG, JPG - max 2MB)';
                 var nextSibling = e.target.nextElementSibling;
                 nextSibling.innerText = fileName;
 
@@ -259,7 +259,7 @@
                     if (fileSize > 2) {
                         errorElement.style.display = 'block';
                         fileInput.value = ''; // Clear the file input
-                        nextSibling.innerText = 'Choose file (JPEG, PNG, JPG, GIF - max 2MB)';
+                        nextSibling.innerText = 'Select file (JPEG, PNG, JPG - max 2MB)';
                         fileInput.classList.add('is-invalid');
                     } else {
                         errorElement.style.display = 'none';

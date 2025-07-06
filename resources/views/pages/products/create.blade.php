@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Product Create')
+@section('title', 'Create New Product')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -32,7 +32,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Create Product</h1>
+                <h1>Add New Product</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
                     <div class="breadcrumb-item"><a href="{{ route('products.index') }}">Products</a></div>
@@ -42,7 +42,7 @@
             <div class="section-body">
                 <h2 class="section-title">Create New Product</h2>
                 <p class="section-lead">
-                    Fill in the product information below
+                    Complete all required fields to add a new product to your inventory
                 </p>
 
                 @if ($errors->any())
@@ -71,7 +71,7 @@
                                 class="needs-validation" novalidate="">
                                 @csrf
                                 <div class="card-header">
-                                    <h4>Create Product Form</h4>
+                                    <h4>New Product Details</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -88,7 +88,7 @@
                                             <select
                                                 class="form-control selectric @error('category_id') is-invalid @enderror"
                                                 name="category_id" required>
-                                                <option value="">Choose Category</option>
+                                                <option value="">Select Category</option>
                                                 @foreach ($categories as $category)
                                                     <option value="{{ $category->id }}"
                                                         {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -120,7 +120,7 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-6 col-12">
-                                            <label>Stock</label>
+                                            <label>Stock Quantity</label>
                                             <input type="number" class="form-control @error('stock') is-invalid @enderror"
                                                 name="stock" value="{{ old('stock') }}" required>
                                             @error('stock')
@@ -129,7 +129,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label>Description</label>
+                                        <label>Product Description</label>
                                         <textarea class="form-control @error('description') is-invalid @enderror" name="description" rows="5" required>{{ old('description') }}</textarea>
                                         @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -152,7 +152,7 @@
                                                 <label class="selectgroup-item">
                                                     <input type="checkbox" name="is_favorite" value="1"
                                                         class="selectgroup-input">
-                                                    <span class="selectgroup-button">Mark as Favorite</span>
+                                                    <span class="selectgroup-button">Favorite</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -164,19 +164,18 @@
                                                 class="custom-file-input @error('image') is-invalid @enderror"
                                                 name="image" id="customFile"
                                                 accept="image/jpeg,image/png,image/jpg,image/gif">
-                                            <label class="custom-file-label" for="customFile">Choose file (JPEG, PNG, JPG,
-                                                GIF - max 2MB)</label>
+                                            <label class="custom-file-label" for="customFile">Select product image (JPEG, PNG, JPG - max 2MB)</label>
                                         </div>
                                         @error('image')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                         <div id="fileError" class="file-error">
-                                            File size exceeds 2MB limit. Please choose a smaller file.
+                                            File size exceeds 2MB limit. Please select a smaller file.
                                         </div>
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="submit" class="btn btn-primary">Save Product</button>
                                     <a href="{{ route('products.index') }}" class="btn btn-secondary">Cancel</a>
                                 </div>
                             </form>
@@ -201,33 +200,33 @@
     <script>
         // Price formatting and validation
         document.addEventListener('DOMContentLoaded', function() {
-        // Price formatting
-        const cleave = new Cleave('#price', {
-            numeral: true,
-            numeralThousandsGroupStyle: 'thousand',
-            numeralDecimalMark: ',',
-            delimiter: '.',
-            prefix: '',
-            numeralIntegerScale: 10,
-            numeralDecimalScale: 0,
-            onValueChanged: function(e) {
-                const rawValue = e.target.rawValue.replace(/[^0-9]/g, '');
-                document.getElementById('price_raw').value = rawValue;
+            // Price formatting
+            const cleave = new Cleave('#price', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                delimiter: '.',
+                prefix: '',
+                numeralIntegerScale: 10,
+                numeralDecimalScale: 0,
+                onValueChanged: function(e) {
+                    const rawValue = e.target.rawValue.replace(/[^0-9]/g, '');
+                    document.getElementById('price_raw').value = rawValue;
 
-                if (rawValue.length > 10) {
-                    const limitedValue = rawValue.substring(0, 10);
-                    cleave.setRawValue(limitedValue);
-                    document.getElementById('price_raw').value = limitedValue;
+                    if (rawValue.length > 10) {
+                        const limitedValue = rawValue.substring(0, 10);
+                        cleave.setRawValue(limitedValue);
+                        document.getElementById('price_raw').value = limitedValue;
+                    }
                 }
-            }
-        });
+            });
 
             // Set initial value
-        @if(isset($product) || old('price'))
-            const initialValue = {{ old('price', isset($product) ? $product->price : 0) }};
-            cleave.setRawValue(initialValue.toString());
-            document.getElementById('price_raw').value = initialValue;
-        @endif
+            @if(isset($product) || old('price'))
+                const initialValue = {{ old('price', isset($product) ? $product->price : 0) }};
+                cleave.setRawValue(initialValue.toString());
+                document.getElementById('price_raw').value = initialValue;
+            @endif
 
             // Form submission handler
             document.querySelector('form').addEventListener('submit', function(e) {
@@ -238,7 +237,7 @@
             // File input handling
             document.querySelector('.custom-file-input')?.addEventListener('change', function(e) {
                 var fileInput = e.target;
-                var fileName = fileInput.files[0]?.name || 'Choose file (JPEG, PNG, JPG, GIF - max 2MB)';
+                var fileName = fileInput.files[0]?.name || 'Select file (JPEG, PNG, JPG - max 2MB)';
                 var nextSibling = e.target.nextElementSibling;
                 nextSibling.innerText = fileName;
 
@@ -250,7 +249,7 @@
                     if (fileSize > 2) {
                         errorElement.style.display = 'block';
                         fileInput.value = ''; // Clear the file input
-                        nextSibling.innerText = 'Choose file (JPEG, PNG, JPG, GIF - max 2MB)';
+                        nextSibling.innerText = 'Select file (JPEG, PNG, JPG - max 2MB)';
                         fileInput.classList.add('is-invalid');
                     } else {
                         errorElement.style.display = 'none';

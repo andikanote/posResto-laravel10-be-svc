@@ -10,9 +10,25 @@ use App\Models\Category;
 class ProductController extends Controller
 {
     // Index
-    public function index()
+public function index()
     {
-        $products = Product::paginate(10);
+        $products = Product::with('category')
+            ->when(request('status') !== null, function($query) {
+                return $query->where('status', request('status'));
+            })
+            ->when(request('search'), function($query) {
+                $search = request('search');
+                return $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
+                    ->orWhereHas('category', function($q) use ($search) {
+                        $q->where('name', 'like', '%'.$search.'%');
+                    });
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
         return view('pages.products.index', compact('products'));
     }
 
@@ -32,7 +48,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:1|max:9999999999', // Max 10 digits
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $product = new Product();
@@ -76,7 +92,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:1|max:9999999999', // Max 10 digits
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $product = Product::findOrFail($id);
