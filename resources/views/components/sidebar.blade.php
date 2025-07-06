@@ -19,10 +19,10 @@
                 </ul>
             </li>
 
-            <li class="menu-header">Users</li>
+            <li class="menu-header">Users Management</li>
             <li class="nav-item dropdown">
                 <a href="#"
-                    class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Users</span></a>
+                    class="nav-link has-dropdown"><i class="fa fa-user"></i><span>Users</span></a>
                 <ul class="dropdown-menu">
                     <li class='{{ Request::is('users') ? 'active' : '' }}'>
                         <a class="nav-link"
@@ -31,10 +31,10 @@
                 </ul>
             </li>
 
-            <li class="menu-header">Products & Category</li>
+            <li class="menu-header">Inventory Management</li>
             <li class="nav-item dropdown">
                 <a href="#"
-                    class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Category</span></a>
+                    class="nav-link has-dropdown"><i class="fas fa-box"></i><span>Category</span></a>
                 <ul class="dropdown-menu">
                     <li class='{{ Request::is('categories') ? 'active' : '' }}'>
                         <a class="nav-link"
@@ -44,7 +44,7 @@
             </li>
             <li class="nav-item dropdown">
                 <a href="#"
-                    class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Products</span></a>
+                    class="nav-link has-dropdown"><i class="fas fa-square"></i><span>Products</span></a>
                 <ul class="dropdown-menu">
                     <li class='{{ Request::is('products') ? 'active' : '' }}'>
                         <a class="nav-link"

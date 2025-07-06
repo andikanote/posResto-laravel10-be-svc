@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
     // Index
-public function index()
+    public function index()
     {
         $products = Product::with('category')
             ->when(request('status') !== null, function($query) {
@@ -29,7 +30,18 @@ public function index()
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('pages.products.index', compact('products'));
+        // Get statistics with caching
+        $stats = Cache::remember('product_stats', now()->addMinutes(30), function() {
+            return [
+                'totalProducts' => Product::count(),
+                'activeProducts' => Product::where('status', 1)->count(),
+                'totalStock' => Product::sum('stock')
+            ];
+        });
+
+        return view('pages.products.index', array_merge([
+            'products' => $products
+        ], $stats));
     }
 
     // Create
@@ -41,11 +53,11 @@ public function index()
 
     // Store
     public function store(Request $request)
-        {
+    {
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:1|max:9999999999', // Max 10 digits
+            'price' => 'required|numeric|min:1|max:9999999999',
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -72,6 +84,9 @@ public function index()
             $product->save();
         }
 
+        // Clear cached stats
+        Cache::forget('product_stats');
+
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
@@ -83,13 +98,13 @@ public function index()
         return view('pages.products.edit', compact('product', 'categories'));
     }
 
-    // Update (Fixed Version)
+    // Update
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:1|max:9999999999', // Max 10 digits
+            'price' => 'required|numeric|min:1|max:9999999999',
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -128,6 +143,10 @@ public function index()
         }
 
         $product->save();
+
+        // Clear cached stats
+        Cache::forget('product_stats');
+
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }
 
@@ -145,6 +164,10 @@ public function index()
         }
 
         $product->delete();
+
+        // Clear cached stats
+        Cache::forget('product_stats');
+
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 }
