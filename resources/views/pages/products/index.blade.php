@@ -11,22 +11,27 @@
             background-color: #28a745;
             color: white;
         }
+
         .badge-inactive {
             background-color: #dc3545;
             color: white;
         }
+
         .filter-group {
             margin-bottom: 15px;
         }
+
         .filter-container {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 20px;
         }
+
         .search-box {
             min-width: 250px;
         }
+
         .product-image {
             max-width: 60px;
             max-height: 60px;
@@ -52,7 +57,8 @@
             <div class="section-body">
                 <h2 class="section-title">Product Management</h2>
                 <p class="section-lead">
-                    Manage your product inventory, including adding new products, updating details, and monitoring stock levels.
+                    Manage your product inventory, including adding new products, updating details, and monitoring stock
+                    levels.
                 </p>
 
                 <div class="row mt-4">
@@ -62,14 +68,28 @@
                                 <h4>Product List</h4>
                             </div>
                             <div class="card-body">
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible show fade">
+                                        <div class="alert-body">
+                                            <button class="close" data-dismiss="alert">
+                                                <span>&times;</span>
+                                            </button>
+                                            {{ session('success') }}
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div class="filter-container">
                                     <!-- Status Filter -->
                                     <div class="filter-group">
                                         <form method="GET" action="{{ route('products.index') }}" id="status-filter-form">
-                                            <select class="form-control selectric" name="status" onchange="this.form.submit()">
+                                            <select class="form-control selectric" name="status"
+                                                onchange="this.form.submit()">
                                                 <option value="">Filter by Status</option>
-                                                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Active</option>
-                                                <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Inactive</option>
+                                                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>
+                                                    Active</option>
+                                                <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>
+                                                    Inactive</option>
                                             </select>
                                         </form>
                                     </div>
@@ -78,12 +98,9 @@
                                     <div class="filter-group search-box">
                                         <form method="GET" action="{{ route('products.index') }}">
                                             <div class="input-group">
-                                                <input type="text"
-                                                    class="form-control"
-                                                    placeholder="Search by product name..."
-                                                    name="search"
-                                                    value="{{ request('search') }}"
-                                                    aria-label="Search products">
+                                                <input type="text" class="form-control"
+                                                    placeholder="Search by product name..." name="search"
+                                                    value="{{ request('search') }}" aria-label="Search products">
                                                 <div class="input-group-append">
                                                     <button class="btn btn-primary" type="submit">
                                                         <i class="fas fa-search"></i> Search
@@ -94,12 +111,12 @@
                                     </div>
 
                                     <!-- Reset Filters -->
-                                    @if(request('status') || request('search'))
-                                    <div class="filter-group">
-                                        <a href="{{ route('products.index') }}" class="btn btn-light">
-                                            <i class="fas fa-sync-alt"></i> Clear Filters
-                                        </a>
-                                    </div>
+                                    @if (request('status') || request('search'))
+                                        <div class="filter-group">
+                                            <a href="{{ route('products.index') }}" class="btn btn-light">
+                                                <i class="fas fa-sync-alt"></i> Clear Filters
+                                            </a>
+                                        </div>
                                     @endif
                                 </div>
 
@@ -119,8 +136,9 @@
                                             <tr>
                                                 <td>{{ $product->name }}</td>
                                                 <td>
-                                                    @if($product->image)
-                                                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
+                                                    @if ($product->image)
+                                                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}"
+                                                            class="product-image">
                                                     @else
                                                         <span class="text-muted">No image</span>
                                                     @endif
@@ -128,12 +146,14 @@
                                                 <td>{{ $product->category->name }}</td>
                                                 <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                                                 <td>
-                                                    <span class="badge {{ $product->status == 1 ? 'badge-active' : 'badge-inactive' }}">
+                                                    <span
+                                                        class="badge {{ $product->status == 1 ? 'badge-active' : 'badge-inactive' }}">
                                                         {{ $product->status == 1 ? 'Active' : 'Inactive' }}
                                                     </span>
                                                 </td>
                                                 <td>{{ $product->stock }}</td>
-                                                <td>{{ $product->created_at->setTimezone('Asia/Jakarta')->format('d M Y H:i') }} WIB</td>
+                                                <td>{{ $product->created_at->setTimezone('Asia/Jakarta')->format('d M Y H:i') }}
+                                                    WIB</td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
                                                         <a href='{{ route('products.edit', $product->id) }}'
@@ -143,10 +163,12 @@
                                                         </a>
 
                                                         <form action="{{ route('products.destroy', $product->id) }}"
-                                                            method="POST" class="ml-2">
+                                                            method="POST" class="ml-2"
+                                                            id="delete-form-{{ $product->id }}">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button class="btn btn-sm btn-danger btn-icon">
+                                                            <button class="btn btn-sm btn-danger btn-icon confirm-delete"
+                                                                data-id="{{ $product->id }}">
                                                                 <i class="fas fa-trash"></i> Delete
                                                             </button>
                                                         </form>
@@ -155,7 +177,8 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="text-center">No products found matching your criteria</td>
+                                                <td colspan="8" class="text-center">No products found matching your
+                                                    criteria</td>
                                             </tr>
                                         @endforelse
                                     </table>
@@ -179,4 +202,38 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/features-posts.js') }}"></script>
+
+    <script>
+        // SweetAlert for success messages
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                timer: 1000, // 3 detik
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        @endif
+
+        // SweetAlert for delete confirmation
+        $(document).on('click', '.confirm-delete', function(e) {
+            e.preventDefault();
+            let productId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(`#delete-form-${productId}`).submit();
+                }
+            });
+        });
+    </script>
 @endpush

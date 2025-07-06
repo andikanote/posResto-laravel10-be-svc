@@ -164,7 +164,8 @@
                                                 class="custom-file-input @error('image') is-invalid @enderror"
                                                 name="image" id="customFile"
                                                 accept="image/jpeg,image/png,image/jpg,image/gif">
-                                            <label class="custom-file-label" for="customFile">Select product image (JPEG, PNG, JPG - max 2MB)</label>
+                                            <label class="custom-file-label" for="customFile">Select product image (JPEG,
+                                                PNG, JPG - max 2MB)</label>
                                         </div>
                                         @error('image')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -196,7 +197,20 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/features-post-create.js') }}"></script>
-
+    @if (session('success'))
+        document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        timer: 1000, // 3 detik
+        timerProgressBar: true,
+        showConfirmButton: false
+        }).then(() => {
+        window.location.href = "{{ route('products.index') }}";
+        });
+        });
+    @endif
     <script>
         // Price formatting and validation
         document.addEventListener('DOMContentLoaded', function() {
@@ -222,7 +236,7 @@
             });
 
             // Set initial value
-            @if(isset($product) || old('price'))
+            @if (isset($product) || old('price'))
                 const initialValue = {{ old('price', isset($product) ? $product->price : 0) }};
                 cleave.setRawValue(initialValue.toString());
                 document.getElementById('price_raw').value = initialValue;

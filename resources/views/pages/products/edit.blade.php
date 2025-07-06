@@ -67,8 +67,8 @@
                 <div class="row mt-sm-4">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form method="POST" action="{{ route('products.update', $product->id) }}" enctype="multipart/form-data"
-                                class="needs-validation" novalidate="">
+                            <form method="POST" action="{{ route('products.update', $product->id) }}"
+                                enctype="multipart/form-data" class="needs-validation" novalidate="">
                                 @csrf
                                 @method('PUT')
                                 <div class="card-header">
@@ -114,7 +114,8 @@
                                                     name="price_display" id="price"
                                                     value="{{ old('price_display', number_format($product->price, 0, ',', '.')) }}"
                                                     required>
-                                                <input type="hidden" name="price" id="price_raw" value="{{ old('price', $product->price) }}">
+                                                <input type="hidden" name="price" id="price_raw"
+                                                    value="{{ old('price', $product->price) }}">
                                             </div>
                                             @error('price')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -142,7 +143,8 @@
                                             <div class="selectgroup selectgroup-pills">
                                                 <label class="selectgroup-item">
                                                     <input type="checkbox" name="status" value="1"
-                                                        class="selectgroup-input" {{ old('status', $product->status) ? 'checked' : '' }}>
+                                                        class="selectgroup-input"
+                                                        {{ old('status', $product->status) ? 'checked' : '' }}>
                                                     <span class="selectgroup-button">Active</span>
                                                 </label>
                                             </div>
@@ -152,7 +154,8 @@
                                             <div class="selectgroup selectgroup-pills">
                                                 <label class="selectgroup-item">
                                                     <input type="checkbox" name="is_favorite" value="1"
-                                                        class="selectgroup-input" {{ old('is_favorite', $product->is_favorite) ? 'checked' : '' }}>
+                                                        class="selectgroup-input"
+                                                        {{ old('is_favorite', $product->is_favorite) ? 'checked' : '' }}>
                                                     <span class="selectgroup-button">Favorite</span>
                                                 </label>
                                             </div>
@@ -166,16 +169,17 @@
                                                 name="image" id="customFile"
                                                 accept="image/jpeg,image/png,image/jpg,image/gif">
                                             <label class="custom-file-label" for="customFile">
-                                                @if($product->image)
+                                                @if ($product->image)
                                                     Current image: {{ basename($product->image) }}
                                                 @else
                                                     Select new image (JPEG, PNG, JPG - max 2MB)
                                                 @endif
                                             </label>
                                         </div>
-                                        @if($product->image)
+                                        @if ($product->image)
                                             <div class="mt-2">
-                                                <img src="{{ asset($product->image) }}" alt="Current product image" style="max-width: 200px;">
+                                                <img src="{{ asset($product->image) }}" alt="Current product image"
+                                                    style="max-width: 200px;">
                                             </div>
                                         @endif
                                         @error('image')
@@ -208,7 +212,20 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/features-post-create.js') }}"></script>
-
+    @if (session('success'))
+        document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        timer: 1000, // 3 detik
+        timerProgressBar: true,
+        showConfirmButton: false
+        }).then(() => {
+        window.location.href = "{{ route('products.index') }}";
+        });
+        });
+    @endif
     <script>
         // Price formatting and validation
         document.addEventListener('DOMContentLoaded', function() {
