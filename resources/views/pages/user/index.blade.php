@@ -110,8 +110,7 @@
                                                     <td class="align-middle">
                                                         <a href="#"
                                                             class="text-primary font-weight-bold view-user-detail"
-                                                            data-id="{{ $user->id }}" data-toggle="modal"
-                                                            data-target="#userProfileModal"
+                                                            data-id="{{ $user->id }}"
                                                             data-user-id="{{ $user->id }}"
                                                             style="text-decoration: none;">
                                                             {{ $user->name }}
