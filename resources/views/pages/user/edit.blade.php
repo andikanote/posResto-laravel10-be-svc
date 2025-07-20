@@ -38,6 +38,13 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label>NIP</label>
+                                        <input type="text" class="form-control" name="nip"
+                                            value="{{ old('nip', $user->nip) }}" readonly disabled>
+                                        <small class="text-muted">NIP cannot be changed</small>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label>Full Name</label>
                                         <input type="text" class="form-control @error('name') is-invalid @enderror"
                                             name="name" value="{{ old('name', $user->name) }}"
@@ -60,7 +67,9 @@
                                             </div>
                                         @enderror
                                     </div>
+                                </div>
 
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Phone Number</label>
                                         <div class="input-group">
@@ -71,9 +80,11 @@
                                             </div>
                                             <input type="text" class="form-control @error('phone') is-invalid @enderror"
                                                 name="phone" id="phone-input" value="{{ old('phone', $user->phone) }}"
-                                                placeholder="Maksimum phone number 13 digits" oninput="validatePhoneNumber(this)" maxlength="13">
+                                                placeholder="Maximum phone number 13 digits"
+                                                oninput="validatePhoneNumber(this)" maxlength="13">
                                         </div>
-                                        <small id="phone-error" class="text-danger d-none">Phone Number must contain only numbers
+                                        <small id="phone-error" class="text-danger d-none">Phone Number must contain only
+                                            numbers
                                             (0-9) and be maximum 13 digits.</small>
                                         @error('phone')
                                             <div class="invalid-feedback">
@@ -81,9 +92,7 @@
                                             </div>
                                         @enderror
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Password</label>
                                         <small class="text-danger d-block mb-2">* Empty if you do not want to change your
@@ -94,8 +103,10 @@
                                         <ul class="text-muted small pl-4 mb-2">
                                             <li id="length-requirement" class="text-danger"></i> Minimum 8 characters</li>
                                             <li id="number-requirement" class="text-danger"></i> At least 1 number</li>
-                                            <li id="special-requirement" class="text-danger"></i> At least 1 special character</li>
-                                            <li id="case-requirement" class="text-danger"></i> Both uppercase and lowercase letters</li>
+                                            <li id="special-requirement" class="text-danger"></i> At least 1 special
+                                                character</li>
+                                            <li id="case-requirement" class="text-danger"></i> Both uppercase and lowercase
+                                                letters</li>
                                         </ul>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
@@ -103,11 +114,13 @@
                                                     <i class="fas fa-lock"></i>
                                                 </div>
                                             </div>
-                                            <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                                name="password" id="password-input" placeholder="Create a strong password"
+                                            <input type="password"
+                                                class="form-control @error('password') is-invalid @enderror" name="password"
+                                                id="password-input" placeholder="Create a strong password"
                                                 onkeyup="checkPasswordStrength()">
                                             <div class="input-group-append">
-                                                <button class="btn btn-outline-secondary" type="button" id="generate-password">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    id="generate-password">
                                                     <i class="fas fa-sync-alt"></i>
                                                 </button>
                                                 <span class="input-group-text">
@@ -116,8 +129,8 @@
                                             </div>
                                         </div>
                                         <div class="progress mt-2" style="height: 5px;">
-                                            <div id="password-strength-bar" class="progress-bar bg-danger" role="progressbar"
-                                                style="width: 0%"></div>
+                                            <div id="password-strength-bar" class="progress-bar bg-danger"
+                                                role="progressbar" style="width: 0%"></div>
                                         </div>
                                         <small id="password-strength-text" class="text-muted"></small>
                                         @error('password')
@@ -131,17 +144,20 @@
                                         <label class="form-label">User Role</label>
                                         <div class="selectgroup w-100">
                                             <label class="selectgroup-item">
-                                                <input type="radio" name="roles" value="ADMIN" class="selectgroup-input"
+                                                <input type="radio" name="roles" value="ADMIN"
+                                                    class="selectgroup-input"
                                                     @if (old('roles', $user->roles) == 'ADMIN') checked @endif>
                                                 <span class="selectgroup-button">Admin</span>
                                             </label>
                                             <label class="selectgroup-item">
-                                                <input type="radio" name="roles" value="STAFF" class="selectgroup-input"
+                                                <input type="radio" name="roles" value="STAFF"
+                                                    class="selectgroup-input"
                                                     @if (old('roles', $user->roles) == 'STAFF') checked @endif>
                                                 <span class="selectgroup-button">Staff</span>
                                             </label>
                                             <label class="selectgroup-item">
-                                                <input type="radio" name="roles" value="USER" class="selectgroup-input"
+                                                <input type="radio" name="roles" value="USER"
+                                                    class="selectgroup-input"
                                                     @if (old('roles', $user->roles) == 'USER') checked @endif>
                                                 <span class="selectgroup-button">User</span>
                                             </label>
@@ -182,7 +198,8 @@
             // Update requirement indicators
             document.getElementById('length-requirement').className = requirements.length ? 'text-success' : 'text-danger';
             document.getElementById('number-requirement').className = requirements.number ? 'text-success' : 'text-danger';
-            document.getElementById('special-requirement').className = requirements.special ? 'text-success' : 'text-danger';
+            document.getElementById('special-requirement').className = requirements.special ? 'text-success' :
+            'text-danger';
             document.getElementById('case-requirement').className = requirements.case ? 'text-success' : 'text-danger';
 
             // Calculate strength score (0-100)

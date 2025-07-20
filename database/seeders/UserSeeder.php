@@ -14,6 +14,7 @@ class UserSeeder extends Seeder
     {
         // Create admin user
         $admin = User::factory()->create([
+            'nip' => '072501',
             'name' => 'Super Admin',
             'email' => 'super4dmin@posin.com',
             'password' => Hash::make('password'),
@@ -27,8 +28,8 @@ class UserSeeder extends Seeder
         ]);
 
         // Create regular users
-        User::factory(1)
-            ->hasProfile()
-            ->create();
+        // User::factory(1)
+        //     ->hasProfile()
+        //     ->create();
     }
 }
