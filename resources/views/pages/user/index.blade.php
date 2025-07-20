@@ -11,6 +11,7 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+
         .locked-user {
             background-color: #f8f9fa;
         }
@@ -56,9 +57,12 @@
                                 <div class="float-left">
                                     <select class="form-control selectric" id="role-filter">
                                         <option value="">All Roles</option>
-                                        <option value="ADMIN" {{ request('role') == 'ADMIN' ? 'selected' : '' }}>Admin</option>
-                                        <option value="STAFF" {{ request('role') == 'STAFF' ? 'selected' : '' }}>Staff</option>
-                                        <option value="USER" {{ request('role') == 'USER' ? 'selected' : '' }}>User</option>
+                                        <option value="ADMIN" {{ request('role') == 'ADMIN' ? 'selected' : '' }}>Admin
+                                        </option>
+                                        <option value="STAFF" {{ request('role') == 'STAFF' ? 'selected' : '' }}>Staff
+                                        </option>
+                                        <option value="USER" {{ request('role') == 'USER' ? 'selected' : '' }}>User
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="float-right">
@@ -91,8 +95,12 @@
                                         <tbody>
                                             @forelse ($users as $user)
                                                 @php
-                                                    $createdAt = \Carbon\Carbon::parse($user->created_at)->setTimezone('Asia/Jakarta');
-                                                    $updatedAt = \Carbon\Carbon::parse($user->updated_at)->setTimezone('Asia/Jakarta');
+                                                    $createdAt = \Carbon\Carbon::parse($user->created_at)->setTimezone(
+                                                        'Asia/Jakarta',
+                                                    );
+                                                    $updatedAt = \Carbon\Carbon::parse($user->updated_at)->setTimezone(
+                                                        'Asia/Jakarta',
+                                                    );
                                                     $isLocked = $loop->first; // Lock first row
                                                 @endphp
                                                 <tr class="{{ $isLocked ? 'locked-user' : '' }}">
@@ -100,17 +108,21 @@
                                                         <a href="#"
                                                             class="text-primary font-weight-bold view-user-detail"
                                                             data-id="{{ $user->id }}" data-toggle="modal"
-                                                            data-target="#userDetailModal" style="text-decoration: none;">
+                                                            data-target="#userProfileModal"
+                                                            data-user-id="{{ $user->id }}"
+                                                            style="text-decoration: none;">
                                                             {{ $user->name }}
-                                                            @if($isLocked)
-                                                                <i class="fas fa-lock ml-1 text-muted" title="This user is locked"></i>
+                                                            @if ($isLocked)
+                                                                <i class="fas fa-lock ml-1 text-muted"
+                                                                    title="This user is locked"></i>
                                                             @endif
                                                         </a>
                                                     </td>
                                                     <td class="align-middle">{{ $user->email }}</td>
                                                     <td class="align-middle">{{ $user->phone ?? '-' }}</td>
                                                     <td class="align-middle">
-                                                        <span class="badge
+                                                        <span
+                                                            class="badge
                                                             @if ($user->roles === 'ADMIN') badge-primary
                                                             @elseif($user->roles === 'STAFF') badge-warning
                                                             @elseif($user->roles === 'USER') badge-success
@@ -120,19 +132,23 @@
                                                     </td>
                                                     <td class="align-middle">
                                                         <div class="d-flex flex-column">
-                                                            <span class="text-sm text-muted">{{ $createdAt->format('d M Y') }}</span>
-                                                            <small class="text-muted">{{ $createdAt->format('H:i') }} WIB</small>
+                                                            <span
+                                                                class="text-sm text-muted">{{ $createdAt->format('d M Y') }}</span>
+                                                            <small class="text-muted">{{ $createdAt->format('H:i') }}
+                                                                WIB</small>
                                                         </div>
                                                     </td>
                                                     <td class="align-middle">
                                                         <div class="d-flex flex-column">
-                                                            <span class="text-sm text-muted">{{ $updatedAt->format('d M Y') }}</span>
-                                                            <small class="text-muted">{{ $updatedAt->format('H:i') }} WIB</small>
+                                                            <span
+                                                                class="text-sm text-muted">{{ $updatedAt->format('d M Y') }}</span>
+                                                            <small class="text-muted">{{ $updatedAt->format('H:i') }}
+                                                                WIB</small>
                                                         </div>
                                                     </td>
                                                     <td class="align-middle">
                                                         <div class="d-flex justify-content-center">
-                                                            @if($isLocked)
+                                                            @if ($isLocked)
                                                                 <button class="btn btn-sm btn-info btn-icon mr-2" disabled
                                                                     title="This user cannot be edited">
                                                                     <i class="fas fa-edit"></i>
@@ -179,7 +195,32 @@
     </div>
 
     <!-- User Detail Modal -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="userDetailModal">
+    <!-- Modal -->
+    <div class="modal fade" id="userProfileModal" tabindex="-1" role="dialog" aria-labelledby="userProfileModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userProfileModalLabel">Profil Pengguna</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBodyContent">
+                    <!-- Konten akan dimuat via AJAX di sini -->
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- <div class="modal fade" tabindex="-1" role="dialog" id="userDetailModal">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -233,7 +274,8 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
+
 @endsection
 
 @push('scripts')
@@ -244,11 +286,25 @@
     <!-- Page Specific JS File -->
     <script>
         $(document).ready(function() {
+        $('#userProfileModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Tombol yang memicu modal
+            var userId = button.data('user-id'); // Ekstrak info dari data-* atribut
+            var modal = $(this);
+
+            // Load konten via AJAX
+            $.get('/profile/modal/' + userId, function(data) {
+                modal.find('#modalBodyContent').html(data);
+            }).fail(function() {
+                modal.find('#modalBodyContent').html('<div class="alert alert-danger">Gagal memuat profil pengguna.</div>');
+            });
+        });
+    });
+        $(document).ready(function() {
             // Initialize selectric
             $('.selectric').selectric();
 
             // Show success alert if exists
-            @if(session('success'))
+            @if (session('success'))
                 swal({
                     title: 'Success',
                     text: '{{ session('success') }}',
@@ -281,17 +337,17 @@
                 var form = $(this).closest('form');
 
                 swal({
-                    title: 'Are you sure?',
-                    text: 'Once deleted, you will not be able to recover this user!',
-                    icon: 'warning',
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        form.submit();
-                    }
-                });
+                        title: 'Are you sure?',
+                        text: 'Once deleted, you will not be able to recover this user!',
+                        icon: 'warning',
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            form.submit();
+                        }
+                    });
             });
 
             // View User Details when clicking on name
@@ -325,7 +381,8 @@
                         } else {
                             roleBadge.addClass('badge-secondary');
                         }
-                        $('#detail-role').text(response.roles.charAt(0) + response.roles.slice(1).toLowerCase());
+                        $('#detail-role').text(response.roles.charAt(0) + response.roles.slice(
+                            1).toLowerCase());
 
                         $('#detail-created').text(createdAt.toLocaleString('en-US', {
                             timeZone: 'Asia/Jakarta',

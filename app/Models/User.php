@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -28,7 +28,8 @@ class User extends Authenticatable
         'roles',
         // Tambahkan ini jika perlu:
         'created_at',
-        'updated_at'
+        'updated_at',
+        'avatar',
     ];
 
     /**
@@ -51,4 +52,9 @@ class User extends Authenticatable
     'password' => 'hashed',
     'roles' => 'string', // Add this line
     ];
+
+        public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
 }
