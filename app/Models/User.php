@@ -21,12 +21,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'nip',
         'name',
         'email',
         'password',
         'phone',
         'roles',
-        // Tambahkan ini jika perlu:
         'created_at',
         'updated_at',
         'avatar',
@@ -48,12 +48,12 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-    'email_verified_at' => 'datetime',
-    'password' => 'hashed',
-    'roles' => 'string', // Add this line
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'roles' => 'string',
     ];
 
-        public function profile()
+    public function profile()
     {
         return $this->hasOne(UserProfile::class);
     }

@@ -45,6 +45,7 @@ class AuthController extends Controller
             'message' => 'User logged in successfully',
             'user' => [
                 'id' => $user->id,
+                'nip' => $user->nip,
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->roles,

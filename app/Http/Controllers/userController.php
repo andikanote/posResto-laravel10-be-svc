@@ -16,7 +16,8 @@ class userController extends Controller
 
         $users = User::when($search, function ($query, $search) {
                 return $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('nip', 'like', "%{$search}%");
             })
             ->when($role, function ($query, $role) {
                 return $query->where('roles', $role);
@@ -33,16 +34,30 @@ class userController extends Controller
         return view('pages.user.create');
     }
 
+    private function generateNIP()
+    {
+        $month = now()->format('m'); // 2 digit bulan
+        $year = now()->format('y'); // 2 digit tahun
+        $lastUser = User::orderBy('id', 'desc')->first();
+        $sequence = $lastUser ? str_pad($lastUser->id + 1, 2, '0', STR_PAD_LEFT) : '01';
+
+        return $month . $year . $sequence; // Format: MMYYNN (6 digit)
+    }
     //Store
+    // Modifikasi method store
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'nullable|string|max:20',
-            'roles' => 'required|in:ADMIN,STAFF,USER',
-        ]);
+        // Hapus validasi NIP karena akan di-generate otomatis
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+        'phone' => 'nullable|string|max:20',
+        'roles' => 'required|in:ADMIN,STAFF,USER',
+    ]);
+
+        // Generate NIP otomatis
+        $validated['nip'] = $this->generateNIP();
 
         // Hash password
         $validated['password'] = Hash::make($validated['password']);
@@ -82,6 +97,7 @@ class userController extends Controller
     {
         // Validate the request data
         $validated = $request->validate([
+            // 'nip' => 'required|string|size:6|unique:users,nip,' . $id,
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8',
@@ -93,6 +109,7 @@ class userController extends Controller
         $user = User::findOrFail($id);
 
         // Update the user data
+        // $user->nip = $validated['nip'];
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->roles = strtoupper($validated['roles']);

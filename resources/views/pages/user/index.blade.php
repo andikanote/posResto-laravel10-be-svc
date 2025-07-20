@@ -68,8 +68,9 @@
                                 <div class="float-right">
                                     <form method="GET" action="{{ route('user.index') }}">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Search by name or email"
-                                                name="search" value="{{ request('search') }}">
+                                            <input type="text" class="form-control"
+                                                placeholder="Search by name, email or NIP" name="search"
+                                                value="{{ request('search') }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                                             </div>
@@ -83,6 +84,7 @@
                                     <table class="table table-striped table-hover">
                                         <thead class="thead-light">
                                             <tr>
+                                                <th class="align-middle">NIP</th>
                                                 <th class="align-middle">Name</th>
                                                 <th class="align-middle">Email</th>
                                                 <th class="align-middle">Phone</th>
@@ -104,6 +106,7 @@
                                                     $isLocked = $loop->first; // Lock first row
                                                 @endphp
                                                 <tr class="{{ $isLocked ? 'locked-user' : '' }}">
+                                                    <td class="align-middle">{{ $user->nip }}</td>
                                                     <td class="align-middle">
                                                         <a href="#"
                                                             class="text-primary font-weight-bold view-user-detail"
@@ -177,7 +180,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="7" class="text-center">No users found</td>
+                                                    <td colspan="8" class="text-center">No users found</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -195,13 +198,12 @@
     </div>
 
     <!-- User Detail Modal -->
-    <!-- Modal -->
     <div class="modal fade" id="userProfileModal" tabindex="-1" role="dialog" aria-labelledby="userProfileModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="userProfileModalLabel">Profil Pengguna</h5>
+                    <h5 class="modal-title" id="userProfileModalLabel">User Profile</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -215,67 +217,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- <div class="modal fade" tabindex="-1" role="dialog" id="userDetailModal">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">User Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Name</label>
-                        <div class="col-sm-9">
-                            <p class="form-control-plaintext" id="detail-name"></p>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Email</label>
-                        <div class="col-sm-9">
-                            <p class="form-control-plaintext" id="detail-email"></p>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Phone</label>
-                        <div class="col-sm-9">
-                            <p class="form-control-plaintext" id="detail-phone"></p>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Role</label>
-                        <div class="col-sm-9">
-                            <span class="badge" id="detail-role-badge">
-                                <span id="detail-role"></span>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Created At</label>
-                        <div class="col-sm-9">
-                            <p class="form-control-plaintext" id="detail-created"></p>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Updated At</label>
-                        <div class="col-sm-9">
-                            <p class="form-control-plaintext" id="detail-updated"></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-    </div> --}}
-
+    </div>
 @endsection
 
 @push('scripts')
@@ -286,24 +232,21 @@
     <!-- Page Specific JS File -->
     <script>
         $(document).ready(function() {
-        $('#userProfileModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Tombol yang memicu modal
-            var userId = button.data('user-id'); // Ekstrak info dari data-* atribut
-            var modal = $(this);
+            $('#userProfileModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var userId = button.data('user-id');
+                var modal = $(this);
 
-            // Load konten via AJAX
-            $.get('/profile/modal/' + userId, function(data) {
-                modal.find('#modalBodyContent').html(data);
-            }).fail(function() {
-                modal.find('#modalBodyContent').html('<div class="alert alert-danger">Gagal memuat profil pengguna.</div>');
+                $.get('/profile/modal/' + userId, function(data) {
+                    modal.find('#modalBodyContent').html(data);
+                }).fail(function() {
+                    modal.find('#modalBodyContent').html(
+                        '<div class="alert alert-danger">Failed to load user profile.</div>');
+                });
             });
-        });
-    });
-        $(document).ready(function() {
-            // Initialize selectric
+
             $('.selectric').selectric();
 
-            // Show success alert if exists
             @if (session('success'))
                 swal({
                     title: 'Success',
@@ -314,7 +257,6 @@
                 });
             @endif
 
-            // Role filter functionality
             $('#role-filter').on('change', function() {
                 var role = $(this).val();
                 var url = new URL(window.location);
@@ -325,13 +267,10 @@
                     url.searchParams.delete('role');
                 }
 
-                // Remove page parameter to go back to first page
                 url.searchParams.delete('page');
-
                 window.location.href = url.toString();
             });
 
-            // Delete confirmation
             $(document).on('click', '.confirm-delete', function(e) {
                 e.preventDefault();
                 var form = $(this).closest('form');
@@ -348,71 +287,6 @@
                             form.submit();
                         }
                     });
-            });
-
-            // View User Details when clicking on name
-            $('.view-user-detail').on('click', function(e) {
-                e.preventDefault();
-                var userId = $(this).data('id');
-
-                // AJAX request to get user details
-                $.ajax({
-                    url: '/user/' + userId,
-                    type: 'GET',
-                    success: function(response) {
-                        // Format dates
-                        var createdAt = new Date(response.created_at);
-                        var updatedAt = new Date(response.updated_at);
-
-                        // Set modal content
-                        $('#detail-name').text(response.name);
-                        $('#detail-email').text(response.email);
-                        $('#detail-phone').text(response.phone || '-');
-
-                        // Set role badge
-                        var roleBadge = $('#detail-role-badge');
-                        roleBadge.removeClass().addClass('badge');
-                        if (response.roles === 'ADMIN') {
-                            roleBadge.addClass('badge-primary');
-                        } else if (response.roles === 'STAFF') {
-                            roleBadge.addClass('badge-warning');
-                        } else if (response.roles === 'USER') {
-                            roleBadge.addClass('badge-success');
-                        } else {
-                            roleBadge.addClass('badge-secondary');
-                        }
-                        $('#detail-role').text(response.roles.charAt(0) + response.roles.slice(
-                            1).toLowerCase());
-
-                        $('#detail-created').text(createdAt.toLocaleString('en-US', {
-                            timeZone: 'Asia/Jakarta',
-                            weekday: 'short',
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            timeZoneName: 'short'
-                        }));
-
-                        $('#detail-updated').text(updatedAt.toLocaleString('en-US', {
-                            timeZone: 'Asia/Jakarta',
-                            weekday: 'short',
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            timeZoneName: 'short'
-                        }));
-
-                        // Show the modal
-                        $('#userDetailModal').modal('show');
-                    },
-                    error: function(xhr) {
-                        swal('Error', 'Failed to fetch user details', 'error');
-                    }
-                });
             });
         });
     </script>
