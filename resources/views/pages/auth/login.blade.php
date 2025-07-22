@@ -7,18 +7,32 @@
     <title>Login &mdash; Boetjah POS</title>
     <link rel="icon" href="{{ asset('img/favicon.ico') }}" type="image/x-icon">
 
-    <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('library/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
         integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('library/bootstrap-social/bootstrap-social.css') }}">
 
-    <!-- Template CSS -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/components.css') }}">
+
+    <style>
+        /* Optional: Add custom styles here for fine-tuning layout or design */
+        /* Example: Adjusting spacing for form elements on small screens */
+        @media (max-width: 767.98px) {
+            .m-3.p-4 {
+                margin: 1.5rem !important; /* Adjust overall margin */
+                padding: 1.5rem !important; /* Adjust overall padding */
+            }
+        }
+
+        /* Ensure the background image covers the area properly */
+        .background-walk-y {
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -118,7 +132,6 @@
         </section>
     </div>
 
-    <!-- Modal for Forgot Password -->
     <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -139,21 +152,29 @@
     </div>
 
     <script>
-        // Function to update greeting based on current time (GMT+7)
+        // Function to update greeting based on current time (GMT+7, WIB)
         function updateGreeting() {
             const now = new Date();
-            // Get current hour in GMT+7 (WIB)
-            const hours = now.getUTCHours() + 7;
-            const adjustedHours = hours >= 24 ? hours - 24 : hours;
+            // Get current hour in GMT (UTC)
+            const utcHours = now.getUTCHours();
+            // Add 7 hours for WIB (GMT+7)
+            let wibHours = utcHours + 7;
+
+            // Adjust if hours go beyond 24 (next day)
+            if (wibHours >= 24) {
+                wibHours -= 24;
+            } else if (wibHours < 0) { // Should not happen with +7, but for completeness
+                wibHours += 24;
+            }
 
             const greetingElement = document.getElementById('greeting');
             let greeting;
 
-            if (adjustedHours >= 0 && adjustedHours < 12) {
+            if (wibHours >= 0 && wibHours < 12) {
                 greeting = 'Good Morning';
-            } else if (adjustedHours >= 12 && adjustedHours < 16) {
+            } else if (wibHours >= 12 && wibHours < 16) {
                 greeting = 'Good Afternoon';
-            } else if (adjustedHours >= 16 && adjustedHours < 19) {
+            } else if (wibHours >= 16 && wibHours < 19) {
                 greeting = 'Good Evening';
             } else {
                 greeting = 'Good Night';
@@ -171,11 +192,11 @@
         // Forgot Password link click handler
         document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
             e.preventDefault();
+            // Using jQuery for Bootstrap modal
             $('#forgotPasswordModal').modal('show');
         });
     </script>
 
-    <!-- General JS Scripts -->
     <script src="{{ asset('library/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('library/popper.js/dist/umd/popper.js') }}"></script>
     <script src="{{ asset('library/tooltip.js/dist/umd/tooltip.js') }}"></script>
@@ -184,11 +205,6 @@
     <script src="{{ asset('library/moment/min/moment.min.js') }}"></script>
     <script src="{{ asset('js/stisla.js') }}"></script>
 
-    <!-- JS Libraies -->
-
-    <!-- Page Specific JS File -->
-
-    <!-- Template JS File -->
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
 </body>
